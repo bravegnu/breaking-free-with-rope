@@ -1,0 +1,248 @@
+= Breaking Free with Rope
+Vijay Kumar B. <vijaykumar@bravegnu.org>
+:dzslides-style: stormy
+:dzslides-fonts: family=Yanone+Kaffeesatz:400,700,200,300&family=Cedarville+Cursive
+:dzslides-highlight: monokai
+
+[{topic}]
+== The Product
+
+image::vts.png[{middle}]
+
+[{topic}]
+== The Module
+
+image::gl865-dual.png[{middle}]
+
+== What does it Pack?
+
+image::python-powered.svg[role="pull-right",width="300"]
+
+  * Version: 1.5
+  * Flash: 1MB
+  * RAM: 1.2MB
+  * Strings: 16K chars
+  * Lists: 4K elements
+  * Dicts: 682 entries
+  * Files: 255
+  * Open Files: 16
+
+== \\
+
+[{middle}]
+Prototyped and verified suitability!
+
+[{topic}]
+== BlackKite, Vehicle Tracking System
+
+image::blackkite.jpg[width=600,{middle}]
+
+== \\
+
+[{middle}]
+Hack ... Hack ... Hack ... And one fine day,
+ +
+ +
+[incremental pull-right]#...'the application refused to boot'! {nbsp} {nbsp}#
+
+== \\
+
+[{statement}]
+Read the *fine* print! Max. unique variable names is *500*!
+
+== \\
+
+[{middle}]
+*Throw away* 8 months of work and hardware designs, and start all over
+from scratch or find some *work around*.
+
+[{source}]
+== Unique Variable Names
+
+.Sample Code
+[syntax="python"]
+------
+def grayscale(red, green, blue):
+    sum = red + green + blue
+    average = sum / 3
+    return average
+------
+
+Local variables added: 2
+
+`sum`, `average`
+
+[{source}]
+== Unique Variable Names (Contd.)
+
+.Sample Code
+[syntax="python"]
+------
+include::sample.py[]
+------
+
+Local variables added: 5
+
+`sum`, `average`, `red_str`, `green_str`, `blue_str`.
+
+[{source}]
+== Reducing Variable Usage
+
+.Sample Code
+[syntax="python"]
+------
+include::samplex.py[]
+------
+
+Local variables added: 3
+
+`la`, `lb`, `lc`.
+
+== \\
+
+image::local-vars-plot.png[role="middle",width="500"]
+
+== \\
+
+[{middle}]
+The code will be hard to implement, and maintain!
+
+[{source}]
+== Transform
+
+[syntax="python"]
+------
+include::sample.py[]
+------
+
+[syntax="python"]
+------
+include::samplex.py[]
+------
+
+[{intro}]
+== Enter *Rope*.
+
+== What's Rope?
+
+[{middle}]
+A *refactoring* library, for Python. https://github.com/python-rope/rope
+
+== What's Refactoring?
+
+[{middle}]
+*Re-ogranizing code*, without changing the interface.
+
+== \\
+
+[{middle}]
+Among the other things, *Rope can rename variables*!
+
+[{source}]
+== Script to Rename Variables
+
+.Renamer
+[syntax="python"]
+------
+include::myrename.py[]
+------
+
+[{source}]
+== Transform Acheived
+
+[syntax="python"]
+------
+include::sample.py[]
+------
+
+[syntax="python"]
+------
+include::samplex.py[]
+------
+
+== \\
+
+[{middle}]
+
+Convenient for building editor plugins -- cursor position is passed to
+rope.
+
+== \\
+
+[{middle}]
+Get help from Python's parser.
+
+== \\
+
+[{middle}]
+x.py -> Parse -> Emit Byte Code -> x.pyc
+
+[{source}]
+== Parse Tree
+
+.Dump Parse Tree
+[syntax="python"]
+------
+>>> import ast
+>>> tree = ast.parse(open("colors.py").read())
+>>> print tree.body
+[<_ast.FunctionDef ...>, <_ast.FunctionDef ...>]
+>>> print tree.body[0].name
+grayscale
+>>> print tree.body[1].name
+to_hex
+>>> print tree.body[0].body
+[<_ast.Assign ...>, <_ast.Assign ...>, <_ast.Return ...>]
+------
+
+image::parse-tree-1.neg.png[width="300", role="pull-right"]
+
+[{source}]
+== Parse Tree (Contd.)
+
+.Function Body
+[syntax="python"]
+-------
+>>> func = tree.body[0]
+>>> print func.body
+[<_ast.Assign ...>, <_ast.Assign ...>, <_ast.Return ...>]
+>>> print func.body[0].targets
+[<_ast.Name ...>]
+>>> print func.body[0].targets[0].id
+sum
+>>> print func.body[0].targets[0].lineno
+2
+>>> print func.body[0].targets[0].col_offset
+4
+-------
+
+image::parse-tree-2.neg.png[width="300", role="pull-right"]
+
+[{source}]
+== Algorithm
+
+.Rename local variables in Function
+[syntax="python"]
+------
+name_index = 0
+assign_nodes = find_assignment_nodes()
+for node in assign_nodes:
+    offset = get_assign_target_offset(node)
+    rename_target(offset, "_l%d" % name_index)
+    name_index += 1
+------
+
+[{topic}]
+== More Savings
+
+[role="scatter"]
+  * Function Arguments
+  * Private Functions 
+  * Private Globals Vars
+  * Private Attributes
+  * Private Methods
+
+== AST Documentation
+
+[{middle}]
+the missing Python AST docs http://greentreesnakes.readthedocs.org

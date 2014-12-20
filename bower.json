@@ -1,0 +1,23 @@
+{
+  "name": "breaking-free-with-rope",
+  "version": "0.1.0",
+  "homepage": "https://github.com/bravegnu/breaking-free-with-rope",
+  "authors": [
+    "Vijay Kumar B. <vijaykumar@bravegnu.org>"
+  ],
+  "main": "slides.txt",
+  "license": "BSD",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dzslides": "paulrouget/dzslides",
+    "GL865-DUAL_product.png": "http://www.telit.com/index.php?eID=tx_nawsecuredl&u=0&g=0&t=1419140820&hash=b9e3987379071866f99bc10f0129fdfc9f75abdf&file=fileadmin/user_upload/Products2/GL865-DUAL_product.png.png",
+    "python-powered-h": "https://www.python.org/static/community_logos/python-powered-h.svg"
+  }
+}
